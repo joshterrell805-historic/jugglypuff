@@ -3,26 +3,20 @@ var http = require('http');
 var Response = require('./Response.njs');
 global.Services = require('./Services.njs');
 
-/*
- * TODO:
- * Parse command-line arguments for port and root (see Response.njs)
- * This is shitty... make it better.
- */
+// --harmony is not included in argv
+var listeningPort = process.argv[2];
+global.documentRoot = process.argv[3];
 
-
-// notice using [2] instead of [3] even though there are four arguments.
-// --harmony is not included in argv.
-global.documentRoot = process.argv[2];
 if (global.documentRoot === undefined)
 {
-   console.log('usage: node --harmony Main.njs <documentRoot>');
+   console.log('usage: node --harmony Main.njs <port> <documentRoot>');
    process.exit();
 }
 
 http.createServer(function(req, res)
 {
    new Response(req, res);
-}).listen(7000);
+}).listen(listeningPort);
 
 /*
  * TODO:

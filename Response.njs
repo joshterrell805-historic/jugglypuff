@@ -13,13 +13,15 @@ var Response = function Response(nodeReq, nodeRes)
    this.nodeResponse = nodeRes;
 
    // I use this server with nginx, so reqUrl.pathname ends up being
-   // /some/path/relative/to/documentRoot.njs
+   // /some/path/relative/to/documentRoot
    // The logic of this might need to change in different server configurations.
+   // I have all my Responders saved with an njs extension.
+   // TODO: make the .njs extension configureable rather than static.
    var reqUrl = url.parse(nodeReq.url);
 
    try
    {
-      this.responder = require(documentRoot + reqUrl.pathname);
+      this.responder = require(documentRoot + reqUrl.pathname + '.njs');
    } catch (e)
    {
       if (e.code == 'MODULE_NOT_FOUND')

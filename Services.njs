@@ -1,4 +1,5 @@
 /*
+ *
  * A member of this object (key:value) is of the following form:
  *
  *    'service name' : asyncServiceFunction(response, parameters)
@@ -22,6 +23,7 @@
  *    }
  *    
  *
+ * Jose did something.
  *
  */
 

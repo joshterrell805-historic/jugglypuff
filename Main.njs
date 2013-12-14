@@ -18,6 +18,10 @@ http.createServer(function(req, res)
    new Response(req, res);
 }).listen(listeningPort);
 
+process.on('SIGINT', function() {
+   process.exit(0);
+});
+
 /*
  * TODO:
  * Make syntax checker.

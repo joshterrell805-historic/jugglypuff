@@ -1,0 +1,8 @@
+// use replace version number with "*" and run npm update --save to update to
+// latest version. Be wary, this may break things.
+
+{
+  "dependencies": {
+    "jade": "~0.35.0"
+  }
+}

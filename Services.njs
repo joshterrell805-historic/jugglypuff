@@ -34,5 +34,6 @@
 
 module.exports = {
    doWork: require('./Services/doWork.njs'),
-   getPostData : require('./Services/getPostData.njs')
+   getPostData: require('./Services/getPostData.njs'),
+   readFile: require('./Services/readFile.njs')
 };

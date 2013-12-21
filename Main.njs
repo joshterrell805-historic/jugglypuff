@@ -2,6 +2,7 @@
 var http = require('http');
 var Response = require('./Response.njs');
 global.Services = require('./Services.njs');
+global.Utilities = require('./Utilities.njs');
 
 // TODO every responder needs this, but nothing else. This should go in some
 // sort of responder parent class that includes the setup and teardown

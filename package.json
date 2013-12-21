@@ -1,8 +1,7 @@
-// use replace version number with "*" and run npm update --save to update to
-// latest version. Be wary, this may break things.
-
 {
+  "//": "replace version number with * and run `npm update --save` to update",
   "dependencies": {
-    "jade": "~0.35.0"
+    "plates": "~0.4.8",
+    "async": "~0.2.9"
   }
 }

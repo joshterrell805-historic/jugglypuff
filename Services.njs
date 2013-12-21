@@ -33,5 +33,6 @@
 // TODO let the server implementer choose which services to add to this object.
 
 module.exports = {
-   getPostData : require('./Services.getPostData.njs')
+   doWork: require('./Services/doWork.njs'),
+   getPostData : require('./Services/getPostData.njs')
 };

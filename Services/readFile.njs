@@ -6,5 +6,6 @@ var fs = require('fs');
  */
 
 module.exports = function readFile(response, filename) {
-   fs.readFile(filename, response.asyncCallback.bind(response));
+   fs.readFile(filename, {encoding: 'utf8'}, 
+    response.asyncCallback.bind(response));
 }

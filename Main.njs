@@ -3,6 +3,11 @@ var http = require('http');
 var Response = require('./Response.njs');
 global.Services = require('./Services.njs');
 
+// TODO every responder needs this, but nothing else. This should go in some
+// sort of responder parent class that includes the setup and teardown
+// (when we get to that)
+global.Plates = require('plates');
+
 // --harmony is not included in argv
 var listeningPort = process.argv[2];
 global.documentRoot = process.argv[3];
@@ -28,4 +33,5 @@ process.on('SIGINT', function() {
  * Add complete tests.
  * Responder testing framework?
  * Make a script for testing (starting and stopping server)
+ * Be able to send signals to the program to reload certain modules
  */

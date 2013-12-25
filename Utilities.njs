@@ -37,11 +37,11 @@ function htmlEncode(str) {
    if (!str)
       return '';
 
-   return str.replace('&', '&amp;')
-             .replace('>', '&gt;')
-             .replace('<', '&lt;')
-             .replace('"', '&quot;')
-             .replace("'", '&#39;')
-             .replace('/', '&#47;')
+   return str.replace(/&/g, '&amp;')
+             .replace(/>/g, '&gt;')
+             .replace(/</g, '&lt;')
+             .replace(/"/g, '&quot;')
+             .replace(/'/g, '&#39;')
+             .replace(/\//g, '&#47;')
    ;
 }

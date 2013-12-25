@@ -34,6 +34,9 @@ function getAbsolutePath(__filename, filename) {
  *
  */
 function htmlEncode(str) {
+   if (!str)
+      return '';
+
    return str.replace('&', '&amp;')
              .replace('>', '&gt;')
              .replace('<', '&lt;')

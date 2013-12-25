@@ -1,4 +1,4 @@
-*.swp
+*.sw*
 # git update-index --assume-unchanged node_modules/ was run on server side
 # so node_modules/* doesn't get removed
 node_modules

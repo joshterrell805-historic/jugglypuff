@@ -1,7 +1,8 @@
 
 module.exports = {
    getAbsolutePath: getAbsolutePath,
-   htmlEncode: htmlEncode
+   htmlEncode: htmlEncode,
+   parseAndValidateInput: require('./Utilities/parseAndValidateInput.njs')
 }
 
 /*

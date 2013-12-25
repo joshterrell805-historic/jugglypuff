@@ -1,7 +1,6 @@
 {
   "//": "replace version number with * and run `npm update --save` to update",
   "dependencies": {
-    "plates": "~0.4.8",
     "async": "~0.2.9",
     "mysql": "~2.0.0-rc2"
   }

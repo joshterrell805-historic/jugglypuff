@@ -7,7 +7,7 @@ global.Utilities = require('./Utilities.njs');
 // TODO every responder needs this, but nothing else. This should go in some
 // sort of responder parent class that includes the setup and teardown
 // (when we get to that)
-global.Plates = require('plates');
+global.htmlReplace = require('./Utilities/htmlReplace.njs');
 
 // --harmony is not included in argv
 var listeningPort = process.argv[2];

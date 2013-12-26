@@ -52,7 +52,7 @@ parseAndValidateInput.errorMessage = {
 };
 
 /*
- * Make sure all necissary fields exist and no extra ones do. Validate input
+ * Make sure all necessary fields exist and no extra ones do. Validate input
  *  against caller-defined requirements. Also, convert all validated fields
  *  into the types requested.
  *
@@ -62,7 +62,7 @@ parseAndValidateInput.errorMessage = {
  *          name: 'stringFieldName'
  *          type: 'string',
  *          length: [1, 20],
- *          invalidRegExpTest: /[^a-zA-Z0-9 ()-]/
+ *          regExpTest: /^[a-zA-Z0-9 ()-]+$/
  *       },
  *       {
  *          name: 'intFieldName'
@@ -166,8 +166,8 @@ function parseAndValidateInput(expectedFields, postOrGetData) {
                }
             }
 
-            if (field.invalidRegExpTest &&
-             field.invalidRegExpTest.test(postOrGetData[property])) {
+            if (field.regExpTest &&
+             !field.regExpTest.test(postOrGetData[field.name])) {
                return {
                   code: errorCode.invalidCharacters,
                   field: field.name
@@ -269,7 +269,7 @@ function parseAndValidateInput(expectedFields, postOrGetData) {
 
          default:
             throw new Error(
-             'expectedFields contains unrecognized type' + field.type
+             'expectedFields contains unrecognized type ' + field.type
             );
          }
       }

@@ -10,15 +10,15 @@ connection.connect(function(err) {
 });
 
 /*
- * query is a string query which may have placeholders
- * parameters is an array of parameters to be passed into the placeholders.
+ * <query> is a string query which may have placeholders
+ * <parameters> is an array of parameters to be passed into the placeholders.
  *
  * ex)
- *  Services.query(response, 'select * from Products where Name = ?', ['taco']);
+ *  Services.query('select * from Products where Name = ?', ['taco'], callback);
  */
-module.exports = function query(response, query, parameters) {
-   connection.query(query, parameters, response.asyncCallback.bind(response));
-};
+
+// query(query, parameters, callback)
+module.exports = connection.query.bind(connection);
 
 /*
  * This gets the connection options (username, password, database, host, ..)

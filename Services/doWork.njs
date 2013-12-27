@@ -16,9 +16,8 @@ var queue = async.queue(queueWorker, numWorkers);
 // functions, but this function wasn't designed for that. Add multiple
 // function support.
 
-module.exports = function doWork(response, work) {
-   queue.push(work, response.asyncCallback.bind(response));
-};
+// doWork(work, callback)
+module.exports = queue.push.bind(queue);
 
 function queueWorker(work, callback) {
    callback(null, work());

@@ -25,10 +25,14 @@ module.exports = {
       return server;
    },
    kill: function(callback) {
-      server.close(callback);
+      server.close(function() {
+         if (callback)
+            callback();
+         process.exit(0);
+      });
    }
 };
 
 process.on('SIGINT', function() {
-   server.close();
+   module.exports.kill();
 });

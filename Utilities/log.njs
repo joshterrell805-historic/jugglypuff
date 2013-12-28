@@ -184,6 +184,8 @@ var defaultModule;
 var modules = {};
 
 function defaultLogger(stream, message, type, module) {
+   if (message)
+      message = typeof message === 'string' ? message : util.inspect(message);
    stream.write((new Date()).toISOString() + ' ' + module + ' (' + type +
-    ') : ' + util.inspect(message) + '\n');
+    ') : ' + message + '\n');
 }

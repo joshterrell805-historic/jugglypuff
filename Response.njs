@@ -27,7 +27,7 @@ function Response(nodeReq, nodeRes)
 
    try
    {
-      this.responder = require(documentRoot + reqUrl.pathname + '.njs');
+      this.responderModule = require(documentRoot + reqUrl.pathname + '.njs');
    } catch (e)
    {
       if (e.code == 'MODULE_NOT_FOUND')
@@ -40,9 +40,22 @@ function Response(nodeReq, nodeRes)
          throw e;
    }
 
-   // Turn the responder generator into an instance
-   this.responder = this.responder(this);
-   this.responder.next();
+   var responder = this.responderModule[nodeReq.method];
+
+   if (responder) {
+      this.responderInstance = responder(this);
+      this.responderInstance.next();
+   } else {
+      // Right now the only public properties of a responder should be the
+      // http methods. This will likely change.
+      var methods = Object.keys(this.responderModule);
+
+      nodeRes.writeHead('405', {
+         Allow: methods.join(', ')
+      });
+
+      nodeRes.end('405');
+   }
 };
 
 /*
@@ -55,7 +68,7 @@ Response.prototype.asyncCallback =
  function Response_asyncCallback(err, retVal)
 {
    if (err)
-      this.responder.throw(err);
+      this.responderInstance.throw(err);
    else
-      this.responder.next(retVal);
+      this.responderInstance.next(retVal);
 }

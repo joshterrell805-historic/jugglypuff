@@ -4,6 +4,7 @@
 module.exports = {
    getAbsolutePath: require('./Utilities/getAbsolutePath.njs'),
    htmlEncode: require('./Utilities/htmlEncode.njs'),
+   log: require('./Utilities/log.njs'),
    parseAndValidateInput: require('./Utilities/parseAndValidateInput.njs')
 }
 

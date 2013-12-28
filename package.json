@@ -1,7 +1,8 @@
 {
-  "//": "replace version number with * and run `npm update --save` to update",
-  "dependencies": {
-    "async": "~0.2.9",
-    "mysql": "~2.0.0-rc2"
-  }
+   "main": "./jugglypuff.njs",
+   "//": "replace version number with * and run `npm update --save` to update",
+   "dependencies": {
+      "async": "~0.2.9",
+      "mysql": "~2.0.0-rc2"
+   }
 }

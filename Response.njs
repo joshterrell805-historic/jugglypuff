@@ -1,5 +1,11 @@
 
 var url = require('url');
+var documentRoot;
+
+module.exports = function(docRoot) {
+   documentRoot = docRoot;
+   return Response;
+}
 
 /*
  * TODO:
@@ -7,7 +13,7 @@ var url = require('url');
  * (git hook)
  */
 
-var Response = function Response(nodeReq, nodeRes)
+function Response(nodeReq, nodeRes)
 {
    this.nodeRequest = nodeReq;
    this.nodeResponse = nodeRes;
@@ -53,5 +59,3 @@ Response.prototype.asyncCallback =
    else
       this.responder.next(retVal);
 }
-
-module.exports = Response;

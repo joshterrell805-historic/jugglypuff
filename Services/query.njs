@@ -1,5 +1,4 @@
 
-var fs = require('fs');
 var mysql = require('mysql');
 
 /*
@@ -10,31 +9,22 @@ var mysql = require('mysql');
  *  Services.query('select * from Products where Name = ?', ['taco'], callback);
  */
 
-module.exports = function(query, parameters, callback) {
-   // This must be a closure so that after reconnects this function/module
-   //  will always resolve 'connection' to the active mysql connection.
 
-   // TODO what happens if a query happens while the connection is resolving?
-   // I think this will pass an error to the callback and all will be okay.
-   // test this.
-   connection.query(query, parameters, callback);
-}
+module.exports = function(connectionOptions) {
 
-/*
- * This gets the connection options (username, password, database, host, ..)
- * from the file below. The file must be in the working directory.
- *
- * It's recommended to add the following file to .gitignore
- *
- * TODO figure out a better way to do this
- */
-function GetConnectionOptions() {
-   return JSON.parse(
-    fs.readFileSync('.mysqlConnectionOptions.json', {encoding: 'utf8'})
-   );
+   // options to pass to mysql.createConnection
+   connectOptions = connectionOptions;
+   connect();
+
+   return function(query, parameters, callback) {
+      // This must be a closure so that after reconnects this function/module
+      //  will always resolve 'connection' to the active mysql connection.
+      connection.query(query, parameters, callback);
+   };
 }
 
 var connection;
+var connectOptions;
 var connectAttempts = 0;
 var maxConnectAttempts = 5;
 var connectAttemptDelay = 2000;
@@ -46,7 +36,7 @@ function connect() {
    }
 
    ++connectAttempts;
-   connection = mysql.createConnection(GetConnectionOptions());
+   connection = mysql.createConnection(connectOptions);
 
    connection.connect(function(error) {
       if (error) {
@@ -76,5 +66,3 @@ function connect() {
 
    });
 }
-
-connect();

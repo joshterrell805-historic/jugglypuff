@@ -9,7 +9,6 @@ var mysql = require('mysql');
  *  Services.query('select * from Products where Name = ?', ['taco'], callback);
  */
 
-
 module.exports = function(connectionOptions) {
 
    // options to pass to mysql.createConnection
@@ -32,7 +31,16 @@ var connectAttemptDelay = 2000;
 function connect() {
 
    if (connectAttempts === maxConnectAttempts) {
-      throw new Error('A connection to mysql could not be established.');
+      var errorMessage = 'Max attempts reached while a connection to mysql ' +
+       'was being established.';
+      if (__jugglypuff__.loggingEnabled) {
+         __jugglypuff__.log(errorMessage,
+          __jugglypuff__.logOptions.query.types.error.name,
+          __jugglypuff__.logOptions.query.name);
+      }
+      var error = new Error(errorMessage);
+      error.code = 'MYSQL_MAX_CONNECT_ATTEMPTS_REACHED';
+      throw error;
    }
 
    ++connectAttempts;
@@ -40,18 +48,33 @@ function connect() {
 
    connection.connect(function(error) {
       if (error) {
-         console.error('Mysql Connection Error:', error.message);
+         if (__jugglypuff__.loggingEnabled) {
+            __jugglypuff__.log(error.message,
+             __jugglypuff__.logOptions.query.types.error.name,
+             __jugglypuff__.logOptions.query.name);
+         }
+
          setTimeout(connect, connectAttemptDelay);
       }
       else {
+
          connectAttempts = 0;
-         console.log('Mysql:', 'connected successfully');
+
+         if (__jugglypuff__.loggingEnabled) {
+            __jugglypuff__.log('connected successfully',
+             __jugglypuff__.logOptions.query.types.info.name,
+             __jugglypuff__.logOptions.query.name);
+         }
       }
    });
 
    connection.on('error', function (error) {
 
-      console.error('Mysql Error:', error.message);
+      if (__jugglypuff__.loggingEnabled) {
+         __jugglypuff__.log(error.message,
+          __jugglypuff__.logOptions.query.types.error.name,
+          __jugglypuff__.logOptions.query.name);
+      }
 
       switch (error.code) {
 

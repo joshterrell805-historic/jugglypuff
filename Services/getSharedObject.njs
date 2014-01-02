@@ -40,12 +40,12 @@
  *  is not.
  */
 
-module.exports = getSharedResponseObject;
+module.exports = getSharedObject;
 
 var objectStore = [];
 // holds objects with {key, info, waiting}
 
-function getSharedResponseObject(getObject, callback) {
+function getSharedObject(getObject, callback) {
 
    var object = getObjectFromKey(getObject);
 

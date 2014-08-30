@@ -1,4 +1,6 @@
 {
+   "name": "jugglypuff",
+   "version": "0.0.0-0",
    "main": "./jugglypuff.njs",
    "//": "replace version number with * and run `npm update --save` to update",
    "dependencies": {

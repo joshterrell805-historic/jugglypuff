@@ -2,9 +2,9 @@
    "name": "jugglypuff",
    "version": "0.0.0-0",
    "main": "./jugglypuff.njs",
-   "//": "replace version number with * and run `npm update --save` to update",
    "dependencies": {
-      "async": "~0.2.9",
-      "mysql": "~2.0.0-rc2"
+      "promise": "~5.0.0",
+      "underscore": "~1.7.0",
+      "debug": "~1.0.4"
    }
 }

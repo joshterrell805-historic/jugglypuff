@@ -9,7 +9,7 @@ function Index() {
 Index.prototype = Object.create(Responder.prototype);
 
 Index.prototype.methods = {
-   'GET': function* GET(res, cont) {
+   'GET': function* GET(cont, res) {
       res.write('you\'re on...');
       yield setTimeout(cont, 1000);
       res.end('the index page!');

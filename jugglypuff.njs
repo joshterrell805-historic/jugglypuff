@@ -1,6 +1,6 @@
 module.exports = {
    Server: Server,
-   Response: require('./lib/Response.njs'),
+   Runner: require('./lib/Runner.njs'),
    Responder: require('./lib/Responder.njs'),
 };
 
@@ -39,7 +39,7 @@ function Server(options) {
       catchAllResponder: '_',
       indexResponder: 'index',
       catchAllAllResponder: '404',
-      responseModule: module.exports.Response,
+      runnerModule: module.exports.Runner,
    };
 
    this.options = _.defaults(options, defaults);
@@ -106,5 +106,6 @@ Server.prototype.stop = function stop(callback) {
 };
 
 Server.prototype._onRequest = function(req, res) {
-   new this.options.responseModule(this, req, res);
+   var runner = new this.options.runnerModule(this, req, res);
+   runner.run();
 };

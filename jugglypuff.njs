@@ -42,7 +42,7 @@ function Server(options) {
       runnerModule: module.exports.Runner,
    };
 
-   this.options = _.defaults(options, defaults);
+   this.options = _.defaults({}, options, defaults);
 
    var root = this.options.documentRoot;
    if (!root.endsWith('/')) {

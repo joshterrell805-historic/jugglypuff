@@ -53,34 +53,34 @@ function Server(options) {
 /**
  * Start listening for requests.
  *
- * callback (optional): callback called with `this` when the server has
- *  successfully started.
- *
  * Return: a promise that resolves when the server is listening or has failed to
  *  listen.
  */
-Server.prototype.start = function start(callback) {
-   var options = this.options;
-   var httpServer = this.httpServer =
-    http.createServer(this._onRequest.bind(this));
+Server.prototype.start = function start() {
+   return new Promise(function(resolve, reject) {
+      var options = this.options;
+      var httpServer = this.httpServer =
+       http.createServer(this._onRequest.bind(this));
 
-   httpServer.once('listening', function() {
-      var hostname = options.hostname ? options.hostname : '*';
-      debug('listening on %s:%s', hostname, options.port);
-      debug('documentRoot: %s', options.documentRoot);
-      this.running = true;
-      callback && callback(this);
-   }.bind(this));
+      httpServer.once('listening', function() {
+         var hostname = options.hostname ? options.hostname : '*';
+         debug('listening on %s:%s', hostname, options.port);
+         debug('documentRoot: %s', options.documentRoot);
+         this.running = true;
+         resolve(this);
+      }.bind(this));
 
-   process.on('SIGINT', function() {
-      debug('SIGINT');
-      if (this.running) {
-         this.stop();
-      }
-   }.bind(this));
+      process.on('SIGINT', function() {
+         debug('SIGINT');
+         if (this.running) {
+            this.stop();
+         }
+      }.bind(this));
 
-   debug('starting...');
-   httpServer.listen(options.port, options.hostname, options.backlog);
+      debug('starting...');
+      httpServer.listen(options.port, options.hostname, options.backlog);
+   }.bind(this))
+   .done(); // throw mad errors on failure
 };
 
 /**

@@ -13,7 +13,7 @@ var _ = require('underscore'),
  *
  * Options:
  *    port: the port to listen to requests on. default=80
- *    documentRoot: the documentRoot to find responders at.
+ *    responderRoot: the absolute root directory to find responders at.
  *     defaults to the directory the application was executed from (PWD)
  *    hostname: see nodejs.org http#server.listen
  *    backlog: see nodejs.org http#server.listen
@@ -32,7 +32,7 @@ var _ = require('underscore'),
 function Server(options) {
    var defaults = {
       backlog: undefined,
-      documentRoot: process.env.PWD,
+      responderRoot: process.env.PWD,
       hostname: undefined,
       port: 80,
       responderExtension: '.njs',
@@ -44,9 +44,9 @@ function Server(options) {
 
    this.options = _.defaults({}, options, defaults);
 
-   var root = this.options.documentRoot;
+   var root = this.options.responderRoot;
    if (!root.endsWith('/')) {
-      this.options.documentRoot += '/';
+      this.options.responderRoot += '/';
    }
 }
 
@@ -65,7 +65,7 @@ Server.prototype.start = function start() {
       httpServer.once('listening', function() {
          var hostname = options.hostname ? options.hostname : '*';
          debug('listening on %s:%s', hostname, options.port);
-         debug('documentRoot: %s', options.documentRoot);
+         debug('responderRoot: %s', options.responderRoot);
          this.running = true;
          resolve(this);
       }.bind(this));

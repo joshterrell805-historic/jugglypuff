@@ -101,9 +101,17 @@ Server.prototype.stop = function stop(callback) {
       var port = this.options.port;
       debug('stopped %s:%s', hostname, port);
       this.running = false;
+      this.onStop();
       callback && callback(this);
    }.bind(this));
 };
+
+/**
+ * Override with cleanup code.
+ * TODO events.
+ */
+Server.prototype.onStop = function onStop() {
+}
 
 Server.prototype._onRequest = function(req, res) {
    var runner = new this.options.runnerModule(this, req, res);

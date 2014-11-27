@@ -6,6 +6,7 @@
       "promise": "~5.0.0",
       "underscore": "~1.7.0",
       "debug": "~1.0.4",
-      "ContinuousGenerator": "git://github.com/joshterrell805/ContinuousGenerator.git"
+      "ContinuousGenerator": "git://github.com/joshterrell805/ContinuousGenerator.git",
+      "cookie": "~0.1.2"
    }
 }

@@ -1,12 +1,13 @@
 {
-   "name": "jugglypuff",
-   "version": "0.0.0-0",
-   "main": "./jugglypuff.njs",
-   "dependencies": {
-      "promise": "~5.0.0",
-      "underscore": "~1.7.0",
-      "debug": "~1.0.4",
-      "ContinuousGenerator": "git://github.com/joshterrell805/ContinuousGenerator.git",
-      "cookie": "~0.1.2"
-   }
+  "name": "jugglypuff",
+  "version": "1.0.0-0",
+  "main": "./jugglypuff.njs",
+  "dependencies": {
+    "promise": "~5.0.0",
+    "underscore": "~1.7.0",
+    "debug": "~1.0.4",
+    "ContinuousGenerator": "git://github.com/joshterrell805/ContinuousGenerator.git",
+    "cookie": "~0.1.2",
+    "ExtendableError": "git://github.com/joshterrell805/ExtendableError.git"
+  }
 }

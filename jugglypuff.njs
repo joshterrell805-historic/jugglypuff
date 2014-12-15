@@ -1,119 +1,120 @@
 module.exports = {
-   Server: Server,
-   Runner: require('./lib/Runner.njs'),
-   Responder: require('./lib/Responder.njs'),
+  Server: Server,
+  Runner: require('./Runner.njs'),
+  Responder: require('./Responder.njs'),
 };
 
 var _ = require('underscore'),
     http = require('http'),
-    debug = require('debug')('jugglypuff:server');
+    debug = require('debug')('jugglypuff:Server'),
+    EventEmitter = require('events').EventEmitter,
+    Promise = require('promise');
 
 /**
  * Create a new server object using the specified options.
  *
  * Options:
- *    port: the port to listen to requests on. default=80
- *    responderRoot: the absolute root directory to find responders at.
- *     defaults to the directory the application was executed from (PWD)
- *    hostname: see nodejs.org http#server.listen
- *    backlog: see nodejs.org http#server.listen
- *    catchAllResponder: The filename of the responder (without extension)
- *     to use in case the appropriate responder can't be found. Useful for
- *     making an entire directory served by one responder or for 404ing
- *     depending on location.
- *     For this responder and index, the current directory is searched for
- *     the appropriate file and if none is found catchAllAll is displayed.
- *    indexResponder: The filename of the responder (without extension)
- *     to be used in the case that a path ending with a '/' is requested.
- *    catchAllAllResponder: a file looked for in the document root to be served
- *     up when the responder doesn't exist and the catchAllResponder doesn't
- *     exist. If this file isn't found an ugly textual '404' is displayed.
+ *   port: the port to listen to requests on. default=80
+ *   responderRoot: the absolute root directory to find responders at.
+ *     defaults to the directory the working directory (PWD)
+ *   hostname: see nodejs.org http#server.listen
+ *   backlog: see nodejs.org http#server.listen
+ *   catchAllResponder: the relative filename of the responder to use in case
+ *     an exact responder doesn't match the requested pathname. Relative to
+ *     directory of requested path (/dir/catchAll serves /dir/* only,
+ *     not /dir/asdf/*).
+ *   indexResponder: the filename of the responder to be used in the case
+ *     that a path ending with a '/' is requested.
+ *   catchAllAllResponder: the pathname (relative to responderRoot) of the 
+ *     responder to be used when a requested pathname hasn't been matched
+ *     by any other means.
+ *   responderExtension: extension to append to all requests when loading
+ *     module.
+ *   
+ * order of lookup:
+ *   exact match, index (if ends in /), catchAll, catchAllAll
+ *
+ * events:
+ *   stop - Fires when the server is being stopped.
+ *          This server overrides default SIGINT so you need to close
+ *            all custom open services using this event.
+ *   request(req, res) - Fires when a new request comes in.
  */
 function Server(options) {
-   var defaults = {
-      backlog: undefined,
-      responderRoot: process.env.PWD,
-      hostname: undefined,
-      port: 80,
-      responderExtension: '.njs',
-      catchAllResponder: '_',
-      indexResponder: 'index',
-      catchAllAllResponder: '404',
-      runnerModule: module.exports.Runner,
-   };
+  var defaults = {
+    port: 80,
+    responderRoot: process.env.PWD,
+    hostname: undefined,
+    backlog: undefined,
+    catchAllResponder: '_',
+    responderExtension: '.njs',
+    indexResponder: 'index',
+    catchAllAllResponder: '404',
+    runnerModule: module.exports.Runner,
+  };
 
-   this.options = _.defaults({}, options, defaults);
+  this.options = _.defaults({}, options, defaults);
 
-   var root = this.options.responderRoot;
-   if (!root.endsWith('/')) {
-      this.options.responderRoot += '/';
-   }
+  var root = this.options.responderRoot;
+  if (root[root.length-1] ==='/') {
+    this.options.responderRoot = root.substr(0, root.length - 1);
+  }
 }
+
+Server.prototype = Object.create(EventEmitter.prototype);
 
 /**
  * Start listening for requests.
  *
- * Return: a promise that resolves when the server is listening or has failed to
- *  listen.
+ * @fires request on new requests
+ * @resolve when the server has started listening
  */
 Server.prototype.start = function start() {
-   return new Promise(function(resolve, reject) {
-      var options = this.options;
-      var httpServer = this.httpServer =
-       http.createServer(this._onRequest.bind(this));
+  this.on('request', this.handleRequest.bind(this));
+  return new Promise(function(resolve, reject) {
+    var options = this.options;
+    var fireRequest = function fireRequest(req, res) {
+      this.emit('request', req, res);
+    }.bind(this);
 
-      httpServer.once('listening', function() {
-         var hostname = options.hostname ? options.hostname : '*';
-         debug('listening on %s:%s', hostname, options.port);
-         debug('responderRoot: %s', options.responderRoot);
-         this.running = true;
-         resolve(this);
-      }.bind(this));
+    var httpServer = this.httpServer = http.createServer(fireRequest);
 
-      process.on('SIGINT', function() {
-         debug('SIGINT');
-         if (this.running) {
-            this.stop();
-         }
-      }.bind(this));
+    httpServer.once('listening', function() {
+      var hostname = options.hostname ? options.hostname : '*';
+      debug('listening on %s:%s', hostname, options.port);
+      debug('responderRoot: %s', options.responderRoot);
+      this.running = true;
+      resolve(this);
+    }.bind(this));
 
-      debug('starting...');
-      httpServer.listen(options.port, options.hostname, options.backlog);
-   }.bind(this))
-   .done(); // throw mad errors on failure
+    process.on('SIGINT', function() {
+      debug('SIGINT');
+      if (this.running) {
+        this.stop();
+      }
+    }.bind(this));
+
+    debug('starting...');
+    httpServer.listen(options.port, options.hostname, options.backlog);
+  }.bind(this));
 };
-
-/**
- * Alias for Server#start
- */
-Server.prototype.listen = Server.prototype.start;
 
 /**
  * Stop the server. 
- *
- * callback (optional): callback called with `this` when the server has
- * successfully stopped.
+ * @fires stop
  */
-Server.prototype.stop = function stop(callback) {
-   debug('stopping...');
-   this.httpServer.close(function() {
-      var hostname = this.options.hostname ? this.options.hostname : '*';
-      var port = this.options.port;
-      debug('stopped %s:%s', hostname, port);
-      this.running = false;
-      this.onStop();
-      callback && callback(this);
-   }.bind(this));
+Server.prototype.stop = function stop() {
+  debug('stopping...');
+  this.httpServer.close(function() {
+    var hostname = this.options.hostname ? this.options.hostname : '*';
+    var port = this.options.port;
+    debug('stopped %s:%s', hostname, port);
+    this.running = false;
+    this.emit('stop');
+  }.bind(this));
 };
 
-/**
- * Override with cleanup code.
- * TODO events.
- */
-Server.prototype.onStop = function onStop() {
-}
-
-Server.prototype._onRequest = function(req, res) {
-   var runner = new this.options.runnerModule(this, req, res);
-   runner.run();
+Server.prototype.handleRequest = function handleRequest(req, res) {
+  var runner = new this.options.runnerModule(this, req, res);
+  runner.run();
 };
